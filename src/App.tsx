@@ -73,6 +73,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import { HotelManagement } from './components/HotelManagement';
+import { CategoryManagement } from './components/CategoryManagement';
 import { RecoilRoot } from 'recoil';
 
 
@@ -131,6 +132,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <HotelManagement />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            path="/category-management"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <CategoryManagement />
               </ProtectedRoute>
             }
           />

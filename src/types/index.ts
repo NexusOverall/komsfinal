@@ -46,6 +46,12 @@ export interface Hotel{
   created_at:string,
   hotel_name:string
 }
+// In your types file
+export interface Category {
+  id: string;
+  name: string;
+  created_at?: string;
+}
 export interface HotelProps {
   hotelName: string;
 }

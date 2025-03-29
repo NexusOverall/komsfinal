@@ -13,6 +13,7 @@ import { OrderSummary } from "./order/OrderSummary"
 import LoadingSpinner from "./common/LoadingSpinner"
 import { ErrorMessage } from "./common/ErrorMessage"
 import { MenuTabs } from "./menu/MenuTabs"
+import { categoryService } from "../services/category/categoryService"
 
 export const OrderSystem: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])

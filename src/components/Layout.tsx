@@ -81,6 +81,8 @@ const Layout: React.FC = () => {
     { text: "Menu Management", icon: <RestaurantMenu />, path: "/menu", roles: ["admin"] },
     { text: "User Management", icon: <People />, path: "/users", roles: ["admin"] },
     { text: "Hotel Management", icon: <People />, path: "/hotel-management", roles: ["admin"] },
+    { text: "Category Management", icon: <People />, path: "/category-management", roles: ["admin"] },
+    
   ].filter((item) => item.roles.includes(user?.role || ""));
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
