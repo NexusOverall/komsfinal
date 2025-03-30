@@ -229,7 +229,7 @@ import LoadingSpinner from './common/LoadingSpinner';
 import { categoryService } from '../services/category/categoryService';
 import { useRecoilState } from 'recoil';
 import { categoryAtom } from '../atoms/categoryatom';
-import { Category } from '../types';
+//import { Category } from '../types';
 
 export const MenuManagement: React.FC = () => {
   const { items, loading, error, addMenuItem, deleteMenuItem } = useMenu();
