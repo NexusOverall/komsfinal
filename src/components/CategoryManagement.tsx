@@ -20,7 +20,7 @@ import {
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
-import { Category } from '../types';
+import { Category,CategoryInput } from '../types';
 import { categoryService } from '../services/category/categoryService';
 
 export const CategoryManagement: React.FC = () => {
@@ -63,12 +63,11 @@ export const CategoryManagement: React.FC = () => {
 
     try {
       const item = {
-        id: crypto.randomUUID(),
-        category_name: newCategory.categoryName,
-        created_at: new Date().toISOString(),
+        name: newCategory.categoryName
+    
       };
-      await categoryService.submitCategory(item);
-      addCategory(item);
+      const itemFetched = await categoryService.submitCategory(item.name);
+      addCategory(itemFetched);
       setSuccessMessage('Category added successfully!');
     } catch (err: any) {
       setError(err.message || 'Failed to add category');
@@ -120,10 +119,11 @@ export const CategoryManagement: React.FC = () => {
             </TableHead>
             <TableBody>
               {categoryItems.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell>{category.category_name}</TableCell>
+            <TableRow key={category.id}>
+                  <TableCell>{category.name}</TableCell>
                   <TableCell>{format(new Date(category.created_at), 'dd/MM/yyyy')}</TableCell>
                   <TableCell>
+                    
                     <Button startIcon={<DeleteIcon />} color="error" onClick={() => handleDelete(category.id)}>
                       Delete
                     </Button>

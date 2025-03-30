@@ -1,5 +1,5 @@
 import { supabase } from '../../config/supabase';
-import { Category } from '../../types';
+import { Category,CategoryInput } from '../../types';
 
 class CategoryService {
   async addCategory(categoryName: string): Promise<Category> {
@@ -30,7 +30,7 @@ class CategoryService {
     }
   }
 
-  async submitCategory(category: Category): Promise<Category> {
+  async submitCategory(category: String): Promise<Category> {
     try {
       const { data: { user }, error: sessionError } = await supabase.auth.getUser();
       if (sessionError) throw new Error('Authentication error');
@@ -49,7 +49,7 @@ class CategoryService {
       const { data: submittedCategory, error: categoryError } = await supabase
         .from('categories')
         .insert({
-          name: category.name,
+          name: category,
           created_at: new Date().toISOString()
         })
         .select()

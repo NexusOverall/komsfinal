@@ -50,6 +50,11 @@ export interface Hotel{
 export interface Category {
   id: string;
   name: string;
+  created_at: string;
+}
+export interface CategoryInput {
+  id?: string;
+  name: string;
   created_at?: string;
 }
 export interface HotelProps {

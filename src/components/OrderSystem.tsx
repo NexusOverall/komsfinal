@@ -33,8 +33,10 @@ export const OrderSystem: React.FC = () => {
         const items = await supabaseStorage.menu.getItems()
         setMenuItems(items)
 
+        const fetchedCategories = await categoryService.getCategories();
+
         // Extract unique categories from menu items
-        const uniqueCategories = Array.from(new Set(items.map((item) => item.category || "Uncategorized")))
+        const uniqueCategories = Array.from(new Set(fetchedCategories.map((item) => item.name || "Uncategorized")))
         setCategories(uniqueCategories)
 
         // Set the first category as active by default
