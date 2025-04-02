@@ -1,20 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Order } from '../types';
 import { orderService } from '../services/order/orderService';
-import { HotelProps } from '../types';
-import { hotelAtomName } from '../atoms/atom';
-import { useRecoilValue } from 'recoil';
 
-export const usePendingOrders = (atomValue:string) => {
-  //console.log(atomValue)
+export const usePendingOrders = (hotelId: string) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout>();
 
+  // Main function to fetch orders
   const loadPendingOrders = async () => {
     try {
       setLoading(true);
-      const pendingOrders = await orderService.getPendingOrders(atomValue);
+      const pendingOrders = await orderService.getPendingOrders(hotelId);
       setOrders(pendingOrders);
       setError(null);
     } catch (err: any) {
@@ -25,18 +23,33 @@ export const usePendingOrders = (atomValue:string) => {
     }
   };
 
+  // Set up polling for real-time updates
   useEffect(() => {
+    // Initial load
     loadPendingOrders();
-    // Poll for new orders every 30 seconds
-    loadPendingOrders();
-   
-    
-  }, [atomValue]);
 
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Set up new interval (20000ms = 20 seconds)
+    intervalRef.current = setInterval(loadPendingOrders, 20000);
+
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [hotelId]);
+
+  // Mark order as completed
   const markAsCompleted = async (orderId: string) => {
     try {
       await orderService.updateOrderStatus(orderId, 'completed');
-      await loadPendingOrders(); // Refresh the orders list
+      // Immediately refresh after status change
+      await loadPendingOrders();
     } catch (err: any) {
       setError(err.message || 'Failed to update order status');
       console.error('Error updating order status:', err);
