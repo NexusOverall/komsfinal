@@ -19,6 +19,7 @@ export interface Order {
   userId: string;
   hotel:string;
   room_no:string;
+  payment_mode:string;
 }
 
 export interface User {

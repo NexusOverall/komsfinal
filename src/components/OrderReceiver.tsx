@@ -25,31 +25,33 @@ import { hotelAtomName } from '../atoms/atom';
 import { Order } from '../types';
 
 export const OrderReceiver: React.FC = () => {
-  const hotelId = useRecoilValue(hotelAtomName); // Automatically updates the component when the atom changes
+  const hotelId = useRecoilValue(hotelAtomName);
   const { user } = useAuth();
 
-  // Get pending orders based on the updated hotelId
-  const { orders, loading, error, markAsCompleted } =
-    usePendingOrders(hotelId);
+  // Destructure the refetch function from usePendingOrders
+  const { orders, loading, error, markAsCompleted, refetch } = usePendingOrders(hotelId);
 
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders); // Add filteredOrders state
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // Update filtered orders when orders or month changes
   useEffect(() => {
-    // Filter orders when the selected month changes
     const [year, month] = selectedMonth.split('-');
     const filtered = orders.filter(order => {
       const orderDate = new Date(order.timestamp);
-      return orderDate.getFullYear() === parseInt(year) && orderDate.getMonth() === parseInt(month) - 1;
+      return orderDate.getFullYear() === parseInt(year) && 
+             orderDate.getMonth() === parseInt(month) - 1;
     });
     setFilteredOrders(filtered);
-  }, [orders, selectedMonth]); // Re-run the filter when orders or selectedMonth change
+  }, [orders, selectedMonth]);
 
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
       await markAsCompleted(orderId);
       setSuccessMessage('Order marked as completed');
+      // Refetch orders after marking as completed
+      await refetch();
     } catch (err) {
       console.error('Error completing order:', err);
     }
@@ -83,6 +85,18 @@ export const OrderReceiver: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Success Snackbar positioned at top center */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={() => setSuccessMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="success" onClose={() => setSuccessMessage(null)} sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
       <div className="flex justify-between items-center mb-4">
         <Typography variant="h5">Pending Orders</Typography>
         <div className="flex gap-4 items-center">
@@ -110,7 +124,6 @@ export const OrderReceiver: React.FC = () => {
           >
             Export Orders
           </Button>
-          
         </div>
       </div>
 
@@ -135,13 +148,9 @@ export const OrderReceiver: React.FC = () => {
                       Order #{order.id.slice(-4)}
                     </Typography>
                     <Chip
-                      icon={
-                        order.status === 'pending' ? <AccessTime /> : <Check />
-                      }
+                      icon={order.status === 'pending' ? <AccessTime /> : <Check />}
                       label={order.status.toUpperCase()}
-                      color={
-                        order.status === 'pending' ? 'warning' : 'success'
-                      }
+                      color={order.status === 'pending' ? 'warning' : 'success'}
                     />
                   </div>
 
@@ -193,16 +202,6 @@ export const OrderReceiver: React.FC = () => {
           ))
         )}
       </Grid>
-
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={6000}
-        onClose={() => setSuccessMessage(null)}
-      >
-        <Alert severity="success" onClose={() => setSuccessMessage(null)}>
-          {successMessage}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };

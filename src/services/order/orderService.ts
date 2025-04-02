@@ -32,6 +32,7 @@ class OrderService {
           user_id: order.userId,
           room_no:order.room_no,
           hotel:order.hotel,
+          payment_mode:order.payment_mode,
           timestamp: new Date().toISOString()
         });
 
