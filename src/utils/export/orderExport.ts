@@ -2,9 +2,8 @@ import { orderService } from '../../services/order/orderService';
 import { format } from 'date-fns';
 import { Order } from '../../types';
 
-export const exportOrders = async (date: Date,orders:Order[]) => {
+export const exportOrders = async (date: Date, orders: Order[]) => {
   try {
-
     // Check if orders are fetched correctly
     console.log('Fetched orders for export:', orders); // Debugging line
 
@@ -12,14 +11,16 @@ export const exportOrders = async (date: Date,orders:Order[]) => {
       throw new Error('No orders found for the selected month');
     }
 
-    // Prepare CSV data
+    // Prepare CSV data with additional columns
     const csvRows = [
-      ['Order ID', 'Date', 'Status', 'Items', 'Total'],
+      ['Order ID', 'Date', 'Status', 'Room No', 'Payment Mode', 'Items', 'Total'],
       ...orders.map(order => [
         order.id,
         format(new Date(order.timestamp), 'yyyy-MM-dd HH:mm:ss'),
         order.status,
-        order.items.map(item => `${item.nameEn} (${item.nameTh}) x${item.quantity}`).join('; '),
+        order.room_no || 'N/A', // Assuming room_no might be optional
+        order.payment_mode || 'N/A', // Assuming payment_mode might be optional
+        order.items.map(item => `${item.name_en} (${item.name_th}) x${item.quantity}`).join('; '),
         order.total
       ])
     ];

@@ -145,6 +145,7 @@ export const OrderManagement: React.FC = () => {
                 <TableCell>Items</TableCell>
                 <TableCell>Total</TableCell>
                 <TableCell>Room No</TableCell>
+                <TableCell>Payment Mode</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -172,6 +173,7 @@ export const OrderManagement: React.FC = () => {
                     </TableCell>
                     <TableCell>{formatCurrency(order.total)}</TableCell>
                     <TableCell>{order.room_no || 'N/A'}</TableCell>
+                    <TableCell>{order.payment_mode || 'N/A'}</TableCell>
                     <TableCell>
                       <IconButton
                         color="error"
